@@ -7,7 +7,7 @@
 
 asmFunc         PROC
 
-                xor     rax, rax
+                mov     rax, 4
                 ret
 
 asmFunc         ENDP
