@@ -1,0 +1,1 @@
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command  "& 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\Launch-VsDevShell.ps1' -Arch amd64 -HostArch amd64"
