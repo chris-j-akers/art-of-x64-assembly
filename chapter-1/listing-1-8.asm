@@ -9,7 +9,7 @@ title_str   byte    'Listing 1-8', 0
 prompt      byte    'Enter a string: ', 0
 fmt_str     byte    'User entered "%s"', nl, 0
 
-; This is similar to: `byte input[256]` in C
+; This is basically an array, similar to: `byte input[max_len]` in C
 ; 'max_len' (256, defined above) dups of an uninitialised (?) byte
 input       byte    max_len dup (?)
 
