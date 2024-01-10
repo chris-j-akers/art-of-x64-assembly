@@ -54,7 +54,8 @@ get_title       endp
 
 read_num        proc
                 sub     rsp, 56
-                call    printf          ; The correct prompt message will be in RCX, having been loaded there
+                call    printf          ; The correct prompt message will be in
+                                        ; RCX, having been loaded there
                                         ; before the function is called.
                 lea     rcx, input
                 mov     rdx, MAX_LEN
