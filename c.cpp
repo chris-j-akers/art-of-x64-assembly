@@ -6,7 +6,7 @@
 extern "C" {
 
     // Assembly procs called by the C++ code
-    void asm_main(void);
+    int asm_main(void);
     char* get_title(void);
 
     // Function called by the assembly code
@@ -29,13 +29,12 @@ int read_line(char *dest, int max_len) {
 
 
 int main(void) {
-
     try {
         char* title = get_title();
 
         printf("Calling %s:\n", title);
-        asm_main();
-        printf("%s terminated\n", title);
+        int result = asm_main();
+        printf("%s terminated with code [%d]\n", title, result);
     }
     catch(...) {
         printf(
