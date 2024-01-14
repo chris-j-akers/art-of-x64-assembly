@@ -12,7 +12,7 @@
                 ; It's required when we're mixing assembler with C/C++
                 OPTION CASEMAP:NONE
 
-; Typedefs
+; Typdefs
 
 uint8_t         TYPEDEF     SBYTE
 int8_t          TYPEDEF     BYTE
@@ -41,15 +41,20 @@ MC_NUL          =               0
                 .CONST  
 ; <C_NAME>      <TYPE>      <VALUE>                
 C_TITLE_STR     BYTE            "Listing 4-2", MC_NUL      
+C_FMT_STR       BYTE            "pb's value is %ph", MC_NEWLINE
+                BYTE            "*pb's value is %d", MC_NEWLINE, MC_NUL
 
                 .DATA
 ; Variable declarations
 ; <name>        <TYPE>      (DUP) <VALUE|?|(?)>
+b               BYTE            0
+                BYTE            1, 2, 3, 4, 5, 6, 7
 
+pb              TEXTEQU         <offset b[2]>
 
                 .CODE
                 ; EXTERNDEF here | EXTERNDEF <func>:<PROC>
-
+                EXTERNDEF printf:PROC
 ; ==============================================================================
 ; get_title()
 ; ==============================================================================
@@ -67,8 +72,20 @@ get_title       ENDP
 ; ==============================================================================
 ; asm_main()
 ; ==============================================================================
+                PUBLIC asm_main
 asm_main        PROC
 
+                sub     rsp, 56                 ; The book has this at 48, but
+                                                ; it doesn't work. Needs to be
+                                                ; 56. 
+
+                lea     rcx, C_FMT_STR
+                mov     rdx, pb
+                movzx   r8, byte ptr [rdx]
+                call    printf
+
+                add     rsp, 56
+                ret
 
 asm_main        ENDP
 
