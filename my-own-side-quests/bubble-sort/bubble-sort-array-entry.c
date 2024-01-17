@@ -29,7 +29,7 @@ void c_bubble_sort(int32_t *array, const int32_t array_len) {
 
     do {
         swapped = false;
-        for(int i=0; i<array_len; i++) {
+        for(int i=0; i<array_len-1; i++) {
             if (array[i] > array[i+1]) {
                 temp = array[i+1];
                 array[i+1] = array[i];
@@ -40,38 +40,43 @@ void c_bubble_sort(int32_t *array, const int32_t array_len) {
     } while(swapped == true);
 }
 
-void duplicate_array(const int32_t* src_array, int32_t* dest_array, const int32_t array_len) {
+void clone_array(const int32_t* src_array, int32_t* dest_array, const int32_t array_len) {
     for (int i=0; i<array_len; i++) {
         dest_array[i] = src_array[i];
     }    
 }
 
 int main() {
-    int array_len = 200000;
+    int array_len = 100000;
 
     int32_t *c_array = malloc(array_len * sizeof(int32_t));
     int32_t *asm_array = malloc(array_len * sizeof(int32_t));
 
     fill_array(c_array, array_len);
-    duplicate_array(c_array, asm_array, array_len);
+    clone_array(c_array, asm_array, array_len);
 
     clock_t begin;
     clock_t end;
-    double time_spent;
+    double c_time_spent;
+    double asm_time_spent;
 
-    printf("Sorting using C function...\n");
+    //print_array(c_array, array_len);
     begin = clock();
     c_bubble_sort(c_array, array_len);
     end = clock();
-    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("Time spent sorting in C: %f\n", time_spent);
+    c_time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    //print_array(c_array, array_len);
+    
 
-    printf("Sorting using MASM function...\n");
     begin = clock();
     bubble_sort(asm_array, array_len);
     end = clock();
-    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("Time spent sorting in MASM: %f\n", time_spent);
+    asm_time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    //print_array(asm_array, array_len);
+
+
+    printf("Time spent sorting in C: %f\n", c_time_spent);
+    printf("Time spent sorting in MASM: %f\n", asm_time_spent);
 
     free(c_array);
     free(asm_array);
