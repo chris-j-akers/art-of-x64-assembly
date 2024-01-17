@@ -56,7 +56,7 @@ C_TITLE_STR     BYTE            "Listing 4-2", MC_NUL
                 PUBLIC get_title
 get_title       PROC
 
-                lea rax, C_TITLE_STR
+                lea             rax, C_TITLE_STR
                 ret
 
 get_title       ENDP
