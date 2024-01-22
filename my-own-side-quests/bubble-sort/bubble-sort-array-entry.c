@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include <time.h>
 
-extern int32_t* bubble_sort(int *array, int array_len);
+extern double bubble_sort(int *array, int array_len);
+extern clock_t clock();
 void print_array(const int32_t *array, const int32_t array_len);
 void fill_array(int32_t* array, int32_t array_len);
 
@@ -47,7 +48,7 @@ void clone_array(const int32_t* src_array, int32_t* dest_array, const int32_t ar
 }
 
 int main() {
-    int array_len = 100000;
+    int array_len = 50000;
 
     int32_t *c_array = malloc(array_len * sizeof(int32_t));
     int32_t *asm_array = malloc(array_len * sizeof(int32_t));
@@ -65,18 +66,15 @@ int main() {
     c_bubble_sort(c_array, array_len);
     end = clock();
     c_time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    //print_array(c_array, array_len);
-    
+    printf("Done C!\n");
 
-    begin = clock();
-    bubble_sort(asm_array, array_len);
-    end = clock();
-    asm_time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    //print_array(asm_array, array_len);
+    // TOOD
+    // Currently clueless as to why the result is always zero, here. I can see
+    // values being put into xmm0 (and I even copied it to RAX for good measure)
+    asm_time_spent = bubble_sort(asm_array, array_len);
 
-
-    printf("Time spent sorting in C: %f\n", c_time_spent);
-    printf("Time spent sorting in MASM: %f\n", asm_time_spent);
+    printf("Time spent sorting in C: %lf\n", c_time_spent);
+    printf("Time spent sorting in MASM: %lf\n", asm_time_spent);
 
     free(c_array);
     free(asm_array);
