@@ -40,15 +40,19 @@ MC_NUL          =               0
 ; Constants
                 .CONST  
 ; <C_NAME>      <TYPE>      <VALUE>                
-C_TITLE_STR     BYTE            "<TITLE STR>", MC_NUL      
+C_TITLE_STR     BYTE            "Listing 5-4", MC_NUL    
+C_SPACE         BYTE            " ", MC_NUL
+C_ASTERISK      BYTE            '*, %d', MC_NEWLINE, MC_NUL
 
                 .DATA
 ; Variable declarations
 ; <name>        <TYPE>      (DUP) <VALUE|?|(?)>
+saveRBX         uint64_t         ?
 
 
                 .CODE
                 ; EXTERNDEF here | EXTERNDEF <func>:<PROC>
+                EXTERNDEF       printf:PROC
 ; LABEL         MNEMONIC      VALUE
 
 ; ==============================================================================
@@ -62,14 +66,40 @@ get_title       PROC
 
 get_title       ENDP
 ; ==============================================================================
-
+print_40_spaces PROC
+                sub     rsp, 48
+                mov     ebx, 40
+printloop:      lea     rcx, C_SPACE
+                call    printf
+                dec     ebx     
+                jnz     printloop
+                add     rsp, 48
+                ret
+print_40_spaces ENDP
 
 ; ==============================================================================
 ; asm_main()
 ; ==============================================================================
+                public asm_main
 asm_main        PROC
+                push    rbx
+                sub     rsp, 40
+                mov     rbx, 20
+astlp:          mov     saveRBX, rbx
+                call    print_40_spaces
+                lea     rcx, C_ASTERISK
+                mov     rdx, saveRBX
+                call    printf                  ; For some reason, printf
+                                                ; Access violates, here! Find
+                                                ; out why !
+                mov     rbx, saveRBX
+                dec     rbx
+                jnz     astlp
 
-
+                add     rsp, 40
+                pop     rbx
+                ret
+                
 asm_main        ENDP
 
                 ; END of source file

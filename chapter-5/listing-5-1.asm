@@ -40,11 +40,12 @@ MC_NUL          =               0
 ; Constants
                 .CONST  
 ; <C_NAME>      <TYPE>      <VALUE>                
-C_TITLE_STR     BYTE            "<TITLE STR>", MC_NUL      
+C_TITLE_STR     BYTE            "Listing 5-1", MC_NUL      
 
                 .DATA
 ; Variable declarations
 ; <name>        <TYPE>      (DUP) <VALUE|?|(?)>
+dwArray         DWORD           256 dup (1)
 
 
                 .CODE
@@ -63,13 +64,25 @@ get_title       PROC
 get_title       ENDP
 ; ==============================================================================
 
+zeroBytes       PROC
+                mov     eax, 0
+                mov     edx, 256
+repeatLp:       mov     [rcx+rdx*4-4], eax
+                dec     rdx
+                jnz     repeatLp
+                ret
+zeroBytes       ENDP
 
 ; ==============================================================================
 ; asm_main()
 ; ==============================================================================
 asm_main        PROC
+                sub     rsp, 48
+                lea     rcx, dwArray
+                call    zeroBytes
 
-
+                add     rsp, 48
+                ret
 asm_main        ENDP
 
                 ; END of source file
