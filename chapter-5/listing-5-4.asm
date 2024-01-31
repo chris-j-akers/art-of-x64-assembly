@@ -42,7 +42,7 @@ MC_NUL          =               0
 ; <C_NAME>      <TYPE>      <VALUE>                
 C_TITLE_STR     BYTE            "Listing 5-4", MC_NUL    
 C_SPACE         BYTE            " ", MC_NUL
-C_ASTERISK      BYTE            '*, %d', MC_NEWLINE, MC_NUL
+C_ASTERISK      BYTE            "* %d", MC_NEWLINE, MC_NUL
 
                 .DATA
 ; Variable declarations
@@ -83,12 +83,12 @@ print_40_spaces ENDP
                 public asm_main
 asm_main        PROC
                 push    rbx
-                sub     rsp, 40
+                sub     rsp, 62
                 mov     rbx, 20
 astlp:          mov     saveRBX, rbx
                 call    print_40_spaces
                 lea     rcx, C_ASTERISK
-                mov     rdx, saveRBX
+                mov     rbx, saveRBX
                 call    printf                  ; For some reason, printf
                                                 ; Access violates, here! Find
                                                 ; out why !
@@ -96,7 +96,7 @@ astlp:          mov     saveRBX, rbx
                 dec     rbx
                 jnz     astlp
 
-                add     rsp, 40
+                add     rsp, 62
                 pop     rbx
                 ret
                 
