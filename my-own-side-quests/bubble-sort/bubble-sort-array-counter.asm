@@ -20,40 +20,25 @@ int32_t         TYPEDEF     SDWORD
 ; ==============================================================================
 ; bubble_sort(uint32_t *array, uint32_t array_len)
 ; ==============================================================================
-bubble_sort     PROC
+bubble_sort_asm     PROC
 
 ; Want this all in registers, no vars!
 
 ; Storage
 ; =======
-; RAX = Preserve array address
-; RCX = Parameter array address (used to increment)
-; RDX = Parameter array_len
-; R8D = Copy of array_len for subbing to 0
-; R9D = n
-; R10D = n+1
-; R11b  = 1/0 based on whether we swapped values during last array scan
-; R12D = Start Clock
-                sub     rsp, 80
-                push    rcx
-                push    rdx
-                push    r8
-                push    r9
-                push    r10
-                push    r12
-                call    clock 
-                pop     r12
-                pop     r10 
-                pop     r9
-                pop     r8
-                pop     rdx 
-                pop     rcx 
+; RAX = Preserve array address / Return Sorteed Array Pointer
+; RCX = Array pointer passed as parameter
+; RDX = Array Length passed as parameter
+; R8D = Counter
+; R9D = Stores n for comparison
+; R10D = Stores n+1 for comparison
+; R11b = 1/0 on whether we swapped values during previous scan
 
-                mov     r12, rax
+                sub     rsp, 32
 
-                ; store array address in rax so, 1) it's ready to return when
-                ; done 2) we can use it again when we're resetting for each 
-                ; array scan.
+                ; store array address in rax so we can use it again when we're 
+                ; resetting for each array scan and have it ready for when we're
+                ; all done.
                 mov     rax, rcx
 
                 ; store length so we can subtract as the counter
@@ -63,38 +48,41 @@ bubble_sort     PROC
                 ; set R10b to 'false' (0)
                 xor     r11b, r11b
 
-                ; have we reached end of the array? Check by comparing the 
-                ; address in rcx with the address in rbx (see above)
+                ; have we gone through all the elements? Check by comparing r8d 
+                ; (our counter) with 0
  check:         cmp     r8d, 0
                 jne     compare
 
+                ; Did we exchange any values?
                 cmp     r11b, 0
+
+                ; Nope, we're done
                 je      done
 
+                ; 'Fraid so, reset for another loop
                 mov     rcx, rax
                 mov     r8d, edx
                 xor     r11b, r11b
                 
                 
-compare:        mov     r9d, [rcx]
+compare:        ; We pull rcc[n] and rcx[n+1] into registers for comparison
+                mov     r9d, [rcx]
                 mov     r10d, [rcx+4]
                 cmp     r9d, r10d
                 jle     continue
 
+                ; Swap
                 mov     [rcx+4], r9d
                 mov     [rcx], r10d
                 mov     r11b, 1
 
-continue:       sub     r8d, 1
+continue:       dec     r8d
                 add     rcx, 4
                 jmp     check
 
-done:           call   clock
-                sub    rax, r12
-                movd   xmm0, rax
-                add    rsp, 80
+done:           add    rsp, 32
                 ret
 
-bubble_sort     ENDP
+bubble_sort_asm ENDP
                 ; END of source file
                 END

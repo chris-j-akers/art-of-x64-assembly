@@ -19,7 +19,7 @@ int32_t         TYPEDEF     SDWORD
 ; ==============================================================================
 ; bubble_sort(uint32_t *array, uint32_t array_len)
 ; ==============================================================================
-bubble_sort     PROC
+bubble_sort_asm PROC
 
 ; Want this all in registers, no vars!
 
@@ -33,8 +33,10 @@ bubble_sort     PROC
 ; R9D   = Store for (n+1) so it can be used to compare against n
 ; R10b  = 1/0 based on whether we swapped values during last array scan
 
+                ; Reserve 32-bytes home space, 1-byte to save RBX
+                sub     rsp, 40
                 ; (R)(E)BX is not volatile so have to preserve it
-                mov     [rsp+qword ptr 8], rbx
+                push     rbx
 
                 ; store array address in rax so, 1) it's ready to return when
                 ; done 2) we can use it again when we're resetting the count 
@@ -90,9 +92,10 @@ compare:        mov     r8d, int32_t ptr [rcx]
 continue:       add     rcx, 4
                 jmp     check                
 
-done:           mov     rbx, [rsp+qword ptr 8]
+done:           pop     rbx
+                add     rsp, 40
                 ret
 
-bubble_sort     ENDP
+bubble_sort_asm ENDP
                 ; END of source file
                 END

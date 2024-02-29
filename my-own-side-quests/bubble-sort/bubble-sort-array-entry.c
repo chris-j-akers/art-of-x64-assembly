@@ -4,11 +4,14 @@
 #include <stdbool.h>
 #include <time.h>
 
-extern double bubble_sort(int *array, int array_len);
+extern void bubble_sort_asm(int *array, int array_len);
 extern clock_t clock();
+
 void print_array(const int32_t *array, const int32_t array_len);
 void fill_array(int32_t* array, int32_t array_len);
 
+
+// Fill an array with a load of random numbers to sort!
 void fill_array(int32_t* array, const int32_t array_len) {
     int32_t max = 0x7FFFFFFF;
 
@@ -18,13 +21,22 @@ void fill_array(int32_t* array, const int32_t array_len) {
     }
 }
 
+// Make a copy so we can use it twice
+void clone_array(const int32_t* src_array, int32_t* dest_array, const int32_t array_len) {
+    for (int i=0; i<array_len; i++) {
+        dest_array[i] = src_array[i];
+    }    
+}
+
+// Print it out
 void print_array(const int32_t *array, const int32_t array_len) {
     for (int i=0; i<array_len; i++) {
         printf("[%p] Array[%ld] = [%ld]\n", &array[i], i, array[i]);
     }
 }
 
-void c_bubble_sort(int32_t *array, const int32_t array_len) {
+// C bubble-sort function
+void bubble_sort_c(int32_t *array, const int32_t array_len) {
     bool swapped = true;
     int32_t temp;
 
@@ -41,14 +53,9 @@ void c_bubble_sort(int32_t *array, const int32_t array_len) {
     } while(swapped == true);
 }
 
-void clone_array(const int32_t* src_array, int32_t* dest_array, const int32_t array_len) {
-    for (int i=0; i<array_len; i++) {
-        dest_array[i] = src_array[i];
-    }    
-}
 
 int main() {
-    int array_len = 50000;
+    int array_len = 1000;
 
     int32_t *c_array = malloc(array_len * sizeof(int32_t));
     int32_t *asm_array = malloc(array_len * sizeof(int32_t));
@@ -61,18 +68,19 @@ int main() {
     double c_time_spent;
     double asm_time_spent;
 
-    //print_array(c_array, array_len);
+    // Do C first
     begin = clock();
-    c_bubble_sort(c_array, array_len);
+    bubble_sort_c(c_array, array_len);
     end = clock();
     c_time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("Done C!\n");
+    
+    // Now Asm
+    begin = clock();
+    bubble_sort_asm(asm_array, array_len);
+    end = clock();
+    asm_time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-    // TOOD
-    // Currently clueless as to why the result is always zero, here. I can see
-    // values being put into xmm0 (and I even copied it to RAX for good measure)
-    asm_time_spent = bubble_sort(asm_array, array_len);
-
+    // Results
     printf("Time spent sorting in C: %lf\n", c_time_spent);
     printf("Time spent sorting in MASM: %lf\n", asm_time_spent);
 
